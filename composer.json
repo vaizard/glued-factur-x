@@ -1,0 +1,96 @@
+{
+  "name": "vaizard/glued-cashflow",
+  "description": "A fio.cz integration component.",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Pavel Stratil",
+      "email": "pavel@vaizard.org"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "ext-apcu": "*",
+    "ext-bcmath": "*",
+    "ext-curl": "*",
+    "ext-gd": "*",
+    "ext-gmp": "*",
+    "ext-imap": "*",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-mysqli": "*",
+    "ext-readline": "*",
+    "ext-soap": "*",
+    "ext-xml": "*",
+    "grasmash/yaml-expander": "^3",
+    "league/flysystem": "^3",
+    "monolog/monolog": "^2",
+    "nyholm/psr7": "^1",
+    "opis/json-schema": "^2",
+    "php-di/php-di": "^6",
+    "php-http/message": "^1",
+    "phpfastcache/phpfastcache": "^9",
+    "ramsey/uuid": "^4",
+    "respect/validation": "^2",
+    "sabre/event": "^5",
+    "selective/transformer": "^1",
+    "slim/http": "^1",
+    "slim/slim": "^4",
+    "symfony/yaml": "^5",
+    "thingengineer/mysqli-database-class": "dev-master#42116651a88b57b03fd967bc57dd38f5094565d9",
+    "atgp/factur-x": "^1",
+    "vaizard/glued-lib": "dev-main",
+    "zeuxisoo/slim-whoops": "^0.7"
+  },
+  "require-dev": {
+    "ergebnis/composer-normalize": "^2"
+  },
+  "suggest": {
+    "ext-xdebug": "For dev only"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/ThingEngineer/PHP-MySQLi-Database-Class",
+      "no-api": true
+    }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Glued\\": "glued/"
+    },
+    "files": []
+  },
+  "config": {
+    "allow-plugins": {
+      "ergebnis/composer-normalize": true
+    }
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "composer configure || echo \"[FAIL] Failed to configure glued. Please make sure all env variables are set. Rerun composer configure.\"",
+      "echo \"Run `composer nginx` manually to pick restart this microservice\""
+    ],
+    "post-update-cmd": [
+      "composer configure || echo \"[FAIL] Failed to configure glued. Please make sure all env variables are set. Rerun composer configure.\"",
+      "echo \"Run `composer nginx` manually to pick restart this microservice\""
+    ],
+    "configure": [
+      "vendor/vaizard/glued-lib/src/Scripts/initpaths.sh",
+      "Glued\\Config\\ComposerHooks::configTool",
+      "vendor/vaizard/glued-lib/src/Scripts/cacheroutes.sh"
+    ],
+    "backup": [
+      "vendor/vaizard/glued-lib/src/Scripts/backup.sh"
+    ],
+    "migrate": [
+      "vendor/vaizard/glued-lib/src/Scripts/migrate.sh"
+    ],
+    "nginx": [
+      "vendor/vaizard/glued-lib/src/Scripts/nginx.sh"
+    ],
+    "start": "php -S localhost:8080 -t public"
+  }
+}
