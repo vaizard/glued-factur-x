@@ -1,0 +1,174 @@
+---
+
+glued:
+    timezone: Europe/Prague
+    protocol: "https://"
+    hostname: ${env.hostname}
+    identity: ${env.identity}
+    rootpath: ${env.rootpath}
+    uservice: ${env.uservice}
+    datapath: ${env.datapath}
+
+db:
+    host:       ${env.mysql_hostname}
+    database:   ${env.mysql_database}
+    username:   ${env.mysql_username}
+    password:   ${env.mysql_password}
+    charset:    utf8mb4
+    collation:  utf8mb4_unicode_ci
+
+logger:
+    name:       ${glued.uservice}
+    path:       ${glued.datapath}/logs/${glued.uservice}.log
+    level:      !php/const \Monolog\Logger::DEBUG
+
+smtp:
+    host:   ${env.smtp_host}
+    port:   465
+    encr:   ssl
+    user:   ${env.smtp_user}
+    pass:   ${env.smtp_pass}
+    from:   ${env.smtp_from}
+    reconnect_after:  '100'
+    reconnect_delay:  '15'
+    throttle_count:   '50'
+    throttle_data:    ''
+
+crypto:
+    mail:       ${env.crypto_secret_mail}
+    reqparams:  ${env.crypto_secret_reqparams}
+
+headers:
+    feature-policy:
+        geolocation:      "'self'"
+        midi:             "'self'"
+        notifications:    "'self'"
+        push:             "'self'"
+        sync-xhr:         "'self'"
+        microphone:       "'self'"
+        camera:           "'self'"
+        magnetometer:     "'self'"
+        gyroscope:        "'self'"
+        speaker:          "'self'"
+        vibrate:          "'self'"
+        fullscreen:       "'self'"
+        payment:          "'self'"
+    referrer-policy:      strict-origin-when-cross-origin
+    content-type-options: nosniff
+    csp:
+        default-src:
+            self: true
+            allow:
+                - ${glued.protocol}${glued.hostname}
+        script-src:
+            self:     true
+            allow:
+                - ${glued.protocol}${glued.hostname}
+                - ${glued.protocol}${glued.identity}
+            strict-dynamic: true
+            unsafe-eval: true
+        object-src:
+            self: true
+        img-src:
+            self: true
+            allow:
+                - data:
+        frame-ancestors:
+            self: true
+            allow:
+                - ${glued.protocol}${glued.hostname}
+                - ${glued.protocol}${glued.identity}
+        child-ancestors:
+            self: false
+            allow:
+                - ${glued.protocol}${glued.hostname}
+                - ${glued.protocol}${glued.identity}
+        connect-src:
+            self: true
+            allow:
+                - ${glued.protocol}${glued.hostname}
+                - ${glued.protocol}${glued.identity}
+        base-uri: 
+            self: true
+        require-trusted-types-for: script
+    hsts:
+        enable: true
+        max-age: 15552
+        include-sub-domains: false
+        preload: false
+
+casbin:
+    model:      default
+    modelconf:  ${glued.rootpath}/glued/Includes/Casbin/${casbin.model}.model
+    adapter:    file
+
+policies:
+    default:
+        p:
+            - [ 'admin', '0', '*', 'c' ]
+            - [ 'admin', '0', '*', 'r' ]
+            - [ 'admin', '0', '*', 'u' ]
+            - [ 'admin', '0', '*', 'd' ]   
+            - [ 'usage', '0', '/ui/worklog', 'r' ]
+            - [ 'usage', '0', '/ui/core/accounts/self', 'r' ]
+            - [ 'usage', '0', '/ui/core/profiles/self', 'r' ]
+            - [ 'usage', '0', '/ui/stor', 'r' ]
+        g:
+            - [ '1', 'admin', '0' ]
+        g2:
+            - ['0', '1']
+
+slim:
+    logErrors:              true
+    logErrorDetails:        true
+    debugEngine:            Whoops
+    displayErrorDetails:    true
+    determineRouteBeforeAppMiddleware: true
+
+php:
+    password_hash_algo: !php/const PASSWORD_ARGON2ID
+    password_hash_opts:  
+        memory_cost:    131072  # !php/const PASSWORD_ARGON2_DEFAULT_MEMORY_COST
+        time_cost:      8       # !php/const PASSWORD_ARGON2_DEFAULT_TIME_COST
+        threads:        !php/const PASSWORD_ARGON2_DEFAULT_THREADS
+    curl:
+        47:     0 # CURLOPT_POST
+        78:     2 # CURLOPT_CONNECTTIMEOUT
+        19913:  1 # CURLOPT_RETURNTRANSFER
+        10018:  "Mozilla/5.0 (X11; Linux x86_64; rv:98.0) Gecko/20100101 Firefox/98.0" # CURLOPT_USERAGENT
+        10082:  ${glued.datapath}/cache/cookies.txt # CURLOPT_COOKIEJAR
+        10031:  ${glued.datapath}/cache/cookies.txt # CURLOPT_COOKIEFILE
+
+oidc:
+    server: ${glued.protocol}${glued.identity}
+    realm: ${env.identity_realm}
+    client:
+        admin:
+            id: ${env.identity_admin_id}
+            user: ${env.identity_admin_user}
+            pass: ${env.identity_admin_pass}
+        confidential:
+            id: ${env.identity_confidential_id}
+            secret: ${env.identity_confidential_secret}
+        public:
+            id: ${env.identity_public_id}
+    uri:
+        base:       ${oidc.server}/auth
+        realm:      ${oidc.uri.base}/realms/${oidc.realm}
+        admin:      ${oidc.uri.base}/admin/realms/${oidc.realm}
+        auth:       ${oidc.uri.realm}/protocol/openid-connect/auth
+        token:      ${oidc.uri.realm}/protocol/openid-connect/token
+        user:       ${oidc.uri.realm}/protocol/openid-connect/userinfo
+        logout:     ${oidc.uri.realm}/protocol/openid-connect/logout
+        jwks:       ${oidc.uri.realm}/protocol/openid-connect/certs
+        discovery:  ${oidc.uri.realm}/.well-known/openid-configuration
+        redirect:   http://localhost:3000   # TODO use routes here
+        login:      http://localhost:3000   # TODO use routes here
+    header: Authorization
+    regexp: '/Bearer\s+(.*)$/i'
+    cookie: AccessToken
+    cookie_param:
+        samesite:   "Lax;"      # String terminated by a `;`
+        secure:     "Secure;"   # String terminated by a `;`
+        path:       "/;"        # String terminated by a `;`
+    cookie_params: SameSite=${oidc.cookie_param.samesite} ${oidc.cookie_param.secure} Path=${oidc.cookie_param.path};

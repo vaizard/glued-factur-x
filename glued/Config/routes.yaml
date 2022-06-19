@@ -1,0 +1,42 @@
+---
+routes:
+
+    #########################################################
+    # FACTURX / NODES                                       #
+    #########################################################
+
+    be_facturx:
+        service:    facturx
+        path:       /api/facturx
+        pattern:    /api/facturx
+        label:      facturx
+        dscr:       A routegroup, no methods here.
+
+    #########################################################
+    # FACTURX / HEALTH                                      #
+    #########################################################
+
+    be_facturx_health_v1:
+        pattern:    ${routes.be_facturx.path}/health/v1
+        path:       ${routes.be_facturx.path}/health/v1
+        label:      facturx health
+        dscr:       A healthcheck endpoint for the microservice.
+        service:    facturx
+        provides:   health
+        methods:
+            get:    Glued\Controllers\ServiceController:health
+
+
+    #########################################################
+    # FACTURX / CONVERT                                     #
+    #########################################################
+
+    be_facturx_extract_v1:
+        pattern:    ${routes.be_facturx.path}/extract/v1
+        path:       ${routes.be_facturx.path}/extract/v1
+        label:      facturx pdf to xls
+        dscr:       Extracts facturx metadata from pdf
+        service:    facturx
+        provides:   
+        methods:
+            get:    Glued\Controllers\ServiceController:extract

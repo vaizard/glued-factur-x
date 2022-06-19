@@ -1,6 +1,6 @@
 {
-  "name": "vaizard/glued-cashflow",
-  "description": "A fio.cz integration component.",
+  "name": "vaizard/glued-facturx",
+  "description": "A factur-x metadata eextractor.",
   "license": "MIT",
   "authors": [
     {
@@ -24,8 +24,8 @@
     "ext-xml": "*",
     "grasmash/yaml-expander": "^3",
     "league/flysystem": "^3",
-    "monolog/monolog": "^2",
     "nyholm/psr7": "^1",
+    "nyholm/psr7-server": "^1",
     "opis/json-schema": "^2",
     "php-di/php-di": "^6",
     "php-http/message": "^1",
@@ -40,7 +40,9 @@
     "thingengineer/mysqli-database-class": "dev-master#42116651a88b57b03fd967bc57dd38f5094565d9",
     "atgp/factur-x": "^1",
     "vaizard/glued-lib": "dev-main",
-    "zeuxisoo/slim-whoops": "^0.7"
+    "zeuxisoo/slim-whoops": "^0.7",
+    "vlucas/phpdotenv": "^5",
+    "horstoeko/zugferd": "^1.0"
   },
   "require-dev": {
     "ergebnis/composer-normalize": "^2"
@@ -77,13 +79,13 @@
       "composer configure || echo \"[FAIL] Failed to configure glued. Please make sure all env variables are set. Rerun composer configure.\"",
       "echo \"Run `composer nginx` manually to pick restart this microservice\""
     ],
+    "backup": [
+      "vendor/vaizard/glued-lib/src/Scripts/backup.sh"
+    ],
     "configure": [
       "vendor/vaizard/glued-lib/src/Scripts/initpaths.sh",
       "Glued\\Config\\ComposerHooks::configTool",
       "vendor/vaizard/glued-lib/src/Scripts/cacheroutes.sh"
-    ],
-    "backup": [
-      "vendor/vaizard/glued-lib/src/Scripts/backup.sh"
     ],
     "migrate": [
       "vendor/vaizard/glued-lib/src/Scripts/migrate.sh"
