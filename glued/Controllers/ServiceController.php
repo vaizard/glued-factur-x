@@ -1,20 +1,11 @@
 <?php
-
 declare(strict_types=1);
-
 namespace Glued\Controllers;
 
+use Exception;
+use horstoeko\zugferd\ZugferdDocumentPdfReader;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use Glued\Classes\Auth;
-use Jose\Component\Core\JWKSet;
-use Jose\Easy\Load;
-use Glued\Classes\Exceptions\AuthTokenException;
-use Glued\Classes\Exceptions\AuthJwtException;
-use Glued\Classes\Exceptions\AuthOidcException;
-use Glued\Classes\Exceptions\DbException;
-use Glued\Classes\Exceptions\TransformException;
-use Linfo\Linfo;
 
 class ServiceController extends AbstractController
 {
@@ -27,7 +18,7 @@ class ServiceController extends AbstractController
      * @return Response Json result set.
      */
     public function stub(Request $request, Response $response, array $args = []): Response {
-        throw new \Exception('Stub method served where it shouldnt. Proxy misconfigured?');
+        throw new Exception('Stub method served where it shouldn\'t. Proxy misconfigured?');
     }
 
     /**
@@ -60,12 +51,10 @@ class ServiceController extends AbstractController
         $params = $request->getQueryParams();
         $data = [];
 
-        $facturx = new \Atgp\FacturX\Facturx();
-        $z = new \horstoeko\zugferd\ZugferdDocumentPdfReader;
+        $z = new ZugferdDocumentPdfReader;
         $path = $this->settings['glued']['datapath'].'/glued-facturx/data';
         $files = $files = glob($this->settings['glued']['datapath'].'/glued-facturx/data/*.pdf');
         foreach ($files as $f) {
-            //$xml = $facturx->getFacturxXmlFromPdf($f);
             $document = $z::readAndGuessFromFile($f);
             $document->getDocumentInformation($documentno, $documenttypecode, $documentdate, $invoiceCurrency, $taxCurrency, $documentname, $documentlanguage, $effectiveSpecifiedPeriod);
 

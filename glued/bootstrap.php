@@ -39,4 +39,4 @@ require_once (__ROOT__ . '/glued/middleware.php');
 require_once (__ROOT__ . '/glued/routes.php');
 
 $app->run();
-?>
+

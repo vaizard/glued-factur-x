@@ -5,9 +5,6 @@
 composer.lock
 composer.phar
 coverage
-public/assets/node_modules/**
-public/assets/cache/**
-phinx.yml
 vendor/
 yarn.lock
 yarn-error.log

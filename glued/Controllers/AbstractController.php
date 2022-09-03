@@ -1,9 +1,6 @@
 <?php
-
 declare(strict_types=1);
-
 namespace Glued\Controllers;
-
 use Psr\Container\ContainerInterface;
 
 abstract class AbstractController
@@ -11,8 +8,7 @@ abstract class AbstractController
     /**
      * @var ContainerInterface
      */
-    protected $c;
-
+    protected ContainerInterface $c;
 
     /**
      * AbstractController constructor. We're passing the whole container to the constructor to be
@@ -28,9 +24,12 @@ abstract class AbstractController
 
 
     /**
-     * __get is a magic method that allows us to always get the correct property out of the 
+     * __get is a magic method that allows us to always get the correct property out of the
      * container, allowing to write $this->db->method() instead of $this->c->db->method()
-     * @param  string $property Container property
+     * @param string $property Container property
+     * @return mixed
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function __get($property)
     {

@@ -15,8 +15,6 @@ use Slim\App;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Middleware\ErrorMiddleware;
 use Slim\Middleware\MethodOverrideMiddleware;
-use Slim\Views\Twig;
-use Slim\Views\TwigMiddleware;
 use Slim\addRoutingMiddleware;
 use Tuupola\Middleware\CorsMiddleware;
 use Zeuxisoo\Whoops\Slim\WhoopsMiddleware;
