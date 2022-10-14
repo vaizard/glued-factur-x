@@ -84,7 +84,7 @@
     ],
     "configure": [
       "vendor/vaizard/glued-lib/src/Scripts/initpaths.sh",
-      "Glued\\Config\\ComposerHooks::configTool",
+      "Glued\\Lib\\ComposerHooks::configTool",
       "vendor/vaizard/glued-lib/src/Scripts/cacheroutes.sh"
     ],
     "migrate": [
